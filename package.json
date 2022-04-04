@@ -1,5 +1,5 @@
 {
-  "name": "fetchapi",
+  "name": "@atom-computation/fetchapi",
   "version": "1.0.0",
   "description": "Wrapper for the fetch js method",
   "main": "fetch.js",
