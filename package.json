@@ -1,0 +1,19 @@
+{
+  "name": "fetchapi",
+  "version": "1.0.0",
+  "description": "Wrapper for the fetch js method",
+  "main": "fetch.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Atom-computation/FetchWrapper.git"
+  },
+  "author": "Atom Computation",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Atom-computation/FetchWrapper/issues"
+  },
+  "homepage": "https://github.com/Atom-computation/FetchWrapper#readme"
+}
