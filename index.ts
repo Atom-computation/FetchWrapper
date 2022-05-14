@@ -1,17 +1,17 @@
-type FetchData = object | FormData | null;
-type FetchHeaders = Headers | null;
-
-interface FetchWrapper {
-  get(url: string, data: FetchData, headers: FetchHeaders);
-  post(url: string, data: FetchData, headers: FetchHeaders);
-  put(url: string, data: FetchData, headers: FetchHeaders);
-  delete(url: string, data: FetchData, headers: FetchHeaders);
-}
+import FetchWrapper, { FetchData, FetchHeaders, FetchReturn } from './types';
 
 class FetchApi implements FetchWrapper {
-    public delete(url: string, data: FetchData = null, headers: FetchHeaders = new Headers({})): Promise<any> {}
- 
-    public get(url: string, data: FetchData = null, headers: FetchHeaders = new Headers({})): Promise<any> {
+    /**
+     * @inheritDoc
+     */
+    public delete<T>(url: string, data: FetchData = null, headers: FetchHeaders = new Headers({})): Promise<FetchReturn<T>> {
+        return FetchApi._fetch(url, 'DELETE', data, headers);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public get<T>(url: string, data: FetchData = null, headers: FetchHeaders = new Headers({})): Promise<FetchReturn<T>> {
         const params: string[] = [];
         if (data && data instanceof FormData) {
             (data as FormData).forEach((value, key) => {
@@ -24,14 +24,32 @@ class FetchApi implements FetchWrapper {
             });
         }
         const newUrl = `${url}?${params.join(',')}`
-        return this._fetch(newUrl, 'GET', null, headers);
+        return FetchApi._fetch(newUrl, 'GET', null, headers);
     }
 
-    public post(url: string, data: FetchData = null, headers: FetchHeaders = new Headers({})): Promise<any> {}
+    /**
+     * @inheritDoc
+     */
+    public post<T>(url: string, data: FetchData = null, headers: FetchHeaders = new Headers({})): Promise<FetchReturn<T>> {
+        return FetchApi._fetch(url, 'POST', data, headers);
+    }
 
-    public put(url: string, data: FetchData = null, headers: FetchHeaders = new Headers({})): Promise<any> {}
+    /**
+     * @inheritDoc
+     */
+    public put<T>(url: string, data: FetchData = null, headers: FetchHeaders = new Headers({})): Promise<FetchReturn<T>> {
+        return FetchApi._fetch(url, 'PUT', data, headers);
+    }
 
-    private async _fetch(url: string, methodName: string, data: FetchData, headers: FetchHeaders): Promise<any> {
+    /**
+     * Internal wrapper
+     * @param url Url to fetch
+     * @param methodName Method call
+     * @param data Data to fetch
+     * @param headers Headers for the request
+     * @private
+     */
+    private static async _fetch<T>(url: string, methodName: string, data: FetchData, headers: FetchHeaders): Promise<FetchReturn<T>> {
         try {
             let response;
             if (data === null) {
@@ -62,10 +80,14 @@ class FetchApi implements FetchWrapper {
             }
         } catch (error) {
             return {
-                error: error
+                status: 500,
+                data: error,
+                ok() {
+                    return false;
+                }
             };
         }
     }
 }
 
-export default new FetchApi();
+export default new FetchApi() as FetchWrapper;
